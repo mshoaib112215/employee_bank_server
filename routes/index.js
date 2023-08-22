@@ -10,6 +10,9 @@ const router = express.Router();
 
 // register
 router.post('/register', authController.register);
+router.post('/register', (req, res)=>{
+    res.status(200).json({message  : "Hello Backend :)"})
+});
 
 // login
 router.post('/login', authController.login);
