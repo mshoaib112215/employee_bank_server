@@ -6,16 +6,18 @@ const errorHandler = require("./middlewares/errorHandler");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
-const corsOptions = {
-  credentials: true,
-  origin: ["http://localhost:3000", 'http://127.0.0.1:5173', 'http://localhost:5173'],
-};
+// const corsOptions = {
+//   credentials: true,
+//   origin: ["http://localhost:3000", 'http://127.0.0.1:5173', 'http://localhost:5173'],
+// };
 
 const app = express();
 
-app.use(cookieParser());
+// app.use(cookieParser());
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+// http://169.254.254.232
+
 
 // app.use(
 //   cors({

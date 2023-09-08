@@ -5,6 +5,7 @@ const UserDTO = require("../dto/user");
 const JWTService = require("../services/JWTService");
 const RefreshToken = require("../models/token");
 const { default: mongoose } = require("mongoose");
+const Avatars = require("../models/avatars");
 
 const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d!@#$%^&*()-_=+{}[\]|;:'",.<>/?\\`~]*$/;
 
@@ -92,6 +93,33 @@ const authController = {
 
     return res.status(201).json({ user: userDto, auth: true });
   },
+  async sendAvatar(req, res, next) {
+    const id = req.params.id;
+    let image;
+    try {
+      image = await Avatars.findOne({ userId: id });
+      res.status(200).json({ result: image })
+    } catch (error) {
+      return next(error);
+    }
+  },
+  async uploadImage(req, res, next) {
+    const imageString = req.body.image;
+    const id = req.user._id;
+    try {
+      const avatar = new Avatars({
+        userId: id,
+        image: imageString
+      });
+      const response = await avatar.save();
+
+      res.status(200).json({ result: response })
+    }
+    catch (error) {
+      return next(error)
+    }
+
+  },
   async login(req, res, next) {
     // 1. validate user input
     // 2. if validation error, return error
@@ -100,7 +128,8 @@ const authController = {
 
     // we expect input data to be in such shape
     const userLoginSchema = Joi.object({
-      username: Joi.string().min(5).max(30).required(),
+      username: Joi.string().required(),
+
       password: Joi.string().pattern(passwordPattern),
     });
 
@@ -119,12 +148,17 @@ const authController = {
 
     try {
       // match username
-      user = await User.findOne({ username: username });
+      user = await User.findOne({
+        $or: [
+          { username: username },
+          { email: username }
+        ]
+      });
 
       if (!user) {
         const error = {
           status: 401,
-          message: "Invalid username",
+          message: "Invalid username/Email",
         };
 
         return next(error);
@@ -182,13 +216,7 @@ const authController = {
   },
   async getUsers(req, res, next) {
     // Get all users for DB
-    if(req.user.role != 'admin'){
-      const error = {
-        status: 403,
-        message: "Unauthorized"
-      }
-      return next(error)
-    }
+
     let newUsers = []
     try {
       const users = await User.find({});
@@ -283,13 +311,13 @@ const authController = {
     // Checing for Admin to update it
     const userInfo = await User.findOne({ _id: userId })
 
-    if (userInfo.role !== 'admin') {
-      const error = {
-        status: 403,
-        message: "Contact Administrator to Edit this user!",
-      }
-      return next(error);
-    }
+    // if (userInfo.role !== 'admin') {
+    //   const error = {
+    //     status: 403,
+    //     message: "Contact Administrator to Edit this user!",
+    //   }
+    //   return next(error);
+    // }
     const updateFields = {
       email,
       name,
@@ -330,7 +358,7 @@ const authController = {
 
     // Delete cookies with sameSite and secure options
     res.clearCookie("accessToken", { sameSite: 'none', secure: true });
-    res.clearCookie("refreshToken", { sameSite: 'none',           secure: true });
+    res.clearCookie("refreshToken", { sameSite: 'none', secure: true });
 
     // 2. response
     res.status(200).json({ user: null, auth: false });

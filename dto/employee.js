@@ -13,6 +13,7 @@ class employeeDTO{
         this.city = employee.city;
         this.applied_date = employee.applied_date;
         this.created_by = employee.created_by;
+        this.createdAt = employee.createdAt;
 
     }
 }
