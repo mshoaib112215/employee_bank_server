@@ -4,6 +4,6 @@
   publish = "" # Leave this empty, as it's not required for server deployments
 
 [[redirects]]
-  from = "/routes/*" # Define your API routes
-  to = "/.netlify/functions/server" # Route API requests to your Express.js server
-  status = 200
+from = "/api/*"
+to = "/.netlify/functions/server"
+status = 200
