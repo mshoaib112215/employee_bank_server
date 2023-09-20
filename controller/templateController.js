@@ -1,5 +1,5 @@
 const { response } = require("express")
-const Template = require("../models/applied_for")
+// const Template = require("../models/applied_for")
 const Template = require("../models/template")
 const Joi = require("joi")
 
