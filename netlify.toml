@@ -1,9 +1,6 @@
 [build]
   functions = "netlify/functions" # Specify the directory where your serverless functions are located
-
-[[plugins]]
-  package = "@netlify/plugin-functions-core" # Enable Netlify Functions
-
+  
 [build.environment]
   NODE_VERSION = "14" # Specify the Node.js version
 
