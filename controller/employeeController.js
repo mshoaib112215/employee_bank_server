@@ -14,12 +14,12 @@ const employeeController = {
             }
             return next(error);
         }
-
+        
         const { applied_for, name, email, phone_no, cnic, type, gender, status, remarks, city, applied_date } = req.body;
-        if (remarks.split([' ']) < 0) {
+        if(remarks.split([' ']) < 0){
             console.log(remarks)
         }
-
+        
         // Validating the req data using Joi
         const employeeData = Joi.object({
             applied_for: Joi.string().required(),
@@ -34,7 +34,7 @@ const employeeController = {
             city: Joi.string().required(),
             applied_date: Joi.date().required(),
         })
-
+        
         const { error } = employeeData.validate(req.body);
         if (error) {
             return next(error);
@@ -66,7 +66,7 @@ const employeeController = {
         }
 
     },
-    async deleteEntry(req, res, next) {
+    async deleteEntry(req, res, next){
         // Checking for Admin 
         if (req.user.role != 'admin') {
             const error = {
@@ -75,18 +75,18 @@ const employeeController = {
             }
             return next(error);
         }
-
+        
         const entryId = req.params.id;
         let response;
-        try {
-            response = await employee.deleteOne({ _id: entryId });
+        try{
+            response = await employee.deleteOne({_id: entryId});
         }
-        catch (error) {
+        catch(error){
             return next(error);
         }
-        return res.status(200).json({ deleteCount: response.deletedCount });
+        return res.status(200).json({deleteCount: response.deletedCount});
     },
-    async deleteManyEntry(req, res, next) {
+    async deleteManyEntry(req, res, next){
         // Checking for Admin 
         if (req.user.role != 'admin') {
             const error = {
@@ -95,11 +95,11 @@ const employeeController = {
             }
             return next(error);
         }
-
-        const entryIds = req.body.data;
-        console.log(entryIds)
+        
+        const entryIds = req.body;
+        console.log(req.body)
         let response;
-        try {
+        try{
             // Ensure entryIds is an array
             if (!Array.isArray(entryIds)) {
                 const error = {
@@ -111,7 +111,7 @@ const employeeController = {
             response = await employee.deleteMany({ _id: { $in: entryIds } });
 
         }
-        catch (error) {
+        catch(error){
             return next(error);
         }
         return res.status(200).json({ result: response });
@@ -145,7 +145,7 @@ const employeeController = {
         // Checing for Admin to update it
         const userInfo = await User.findOne({ _id: req.user._id })
 
-
+        
         if (userInfo.role !== 'admin') {
             const error = {
                 status: 403,
@@ -182,21 +182,21 @@ const employeeController = {
         res.status(200).json({ modifiedCount: response.modifiedCount })
 
     },
-    async getEntries(req, res, next) {
-
-
+    async getEntries(req, res, next){
+        
+        
         let response;
-        try {
+        try{
             response = await employee.find({});
         }
-        catch (error) {
+        catch(error){
             return next(error)
         }
-
-
-        res.status(200).json({ result: response })
+        
+            
+        res.status(200).json({ result: response })    
     },
-    async getEmployee(req, res, next) {
+    async getEmployee(req, res, next){
         if (req.user.role === 'employee') {
             const error = {
                 status: 403,
@@ -204,16 +204,16 @@ const employeeController = {
             }
             return next(error)
         }
-
+        
         let response;
-        try {
-            response = await employee.findOne({ _id: req.params.id });
+        try{
+            response = await employee.findOne({_id: req.params.id});
         }
-        catch (error) {
+        catch(error){
             return next(error)
         }
         response = employeeDTO(response);
-        res.status(200).json({ result: response })
+        res.status(200).json({result: response})
     }
 
 }

@@ -12,8 +12,8 @@ const router = express.Router();
 
 // register
 router.post('/register', authController.register);
-router.get('/', (req, res) => {
-    res.status(200).json({ message: "Hello Backend :)" })
+router.get('/', (req, res)=>{
+    res.status(200).json({message  : "Hello Backend :)"})
 });
 
 // login
@@ -26,7 +26,7 @@ router.delete('/delete/:id/:userId', authController.deleteUser);
 router.put('/update/:id/:userId', authController.updateUser);
 
 // see users
-router.get('/users', auth, authController.getUsers);
+router.get('/users',auth,  authController.getUsers);
 // Get User by ID
 router.get('/user/:id', authController.getUser);
 
@@ -34,6 +34,8 @@ router.get('/user/:id', authController.getUser);
 router.post('/logout', auth, authController.logout)
 // Upload Images
 router.post('/upload', auth, authController.uploadImage);
+// Delete Images
+router.delete('/delete-avatar', auth, authController.deleteImage);
 
 router.get('/get-avatar/:id', authController.sendAvatar);
 
@@ -53,7 +55,7 @@ router.put('/update-entry/:id', auth, employeeController.updateEntry)
 // read
 router.get('/entries', auth, employeeController.getEntries)
 // read:id
-router.get('/employee/:id', auth, employeeController.getEmployee)
+router.get('/employee/:id', auth, employeeController.getEmployee) 
 
 /////////////////////// templete ////////////////////
 router.get('/templates', auth, templateController.getTemplate)

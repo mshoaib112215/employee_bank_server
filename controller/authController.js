@@ -94,6 +94,7 @@ const authController = {
     return res.status(201).json({ user: userDto, auth: true });
   },
   async sendAvatar(req, res, next) {
+    console.log('hello')
     const id = req.params.id;
     let image;
     try {
@@ -105,7 +106,7 @@ const authController = {
   },
   async uploadImage(req, res, next) {
     const imageString = req.body.image;
-    const id = req.user._id;
+    const id = req.user._id; 
     try {
       const avatar = new Avatars({
         userId: id,
@@ -120,6 +121,24 @@ const authController = {
     }
 
   },
+  async deleteImage(req, res, next) {
+    const userId = req.user._id; // Assuming you have access to the user ID
+    try {
+      // Find and delete the avatar record associated with the user
+      const deletedAvatar = await Avatars.deleteMany({ userId });
+
+      if (!deletedAvatar) {
+        // If no avatar was found for the user, return a 404 status
+        return res.status(404).json({ message: 'Avatar not found for the user' });
+      }
+      // You can also delete the image file associated with the avatar if needed
+      res.status(200).json({ message: 'Avatar deleted successfully', deletedAvatar });
+    } catch (error) {
+      // Handle any errors that occur during the deletion process
+      return next(error);
+    }
+  },
+
   async login(req, res, next) {
     // 1. validate user input
     // 2. if validation error, return error
@@ -129,7 +148,7 @@ const authController = {
     // we expect input data to be in such shape
     const userLoginSchema = Joi.object({
       username: Joi.string().required(),
-
+        
       password: Joi.string().pattern(passwordPattern),
     });
 
@@ -216,7 +235,7 @@ const authController = {
   },
   async getUsers(req, res, next) {
     // Get all users for DB
-
+    
     let newUsers = []
     try {
       const users = await User.find({});
@@ -304,20 +323,21 @@ const authController = {
 
     // 1. update user
     const childId = req.params.id;
-    const userId = req.params.userId;
 
     const { email, password, name, role } = req.body
 
-    // Checing for Admin to update it
-    const userInfo = await User.findOne({ _id: userId })
+    // Deleting tokens in user
+    JWTService.deleteRefreshToken(childId)
+    console.log(childId)
+    // delete cookies
+    try {
+      res.clearCookie("accessToken");
+      res.clearCookie("refreshToken");
+    }
+    catch (error) {
+      console.log(error)
+    }
 
-    // if (userInfo.role !== 'admin') {
-    //   const error = {
-    //     status: 403,
-    //     message: "Contact Administrator to Edit this user!",
-    //   }
-    //   return next(error);
-    // }
     const updateFields = {
       email,
       name,

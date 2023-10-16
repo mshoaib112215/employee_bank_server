@@ -18,6 +18,7 @@ const employeeModel = new Schema({
     status: {type: String, required: true},
     remarks: {type: String},
     created_by: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    
 },
     { timestamps: true }
 );

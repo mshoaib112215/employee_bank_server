@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const userType = ['admin', 'HR', 'employee'];
+const userType = ['admin', 'HR', 'Data Entry'];
 const {Schema} = mongoose;
 
 const userSchema = new Schema({

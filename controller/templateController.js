@@ -1,5 +1,5 @@
 const { response } = require("express")
-// const Template = require("../models/applied_for")
+
 const Template = require("../models/template")
 const Joi = require("joi")
 
@@ -7,7 +7,7 @@ const Joi = require("joi")
 const templateController = {
     async addTemplate(req, res, next) {
         // data validation
-        
+
         const newData = Joi.object({
             value: Joi.string().required(),
             description: Joi.string().required(),
@@ -30,12 +30,13 @@ const templateController = {
         // sending data to DB
         let response;
         try {
-
             const template = new Template({
                 value: req.body.value,
                 description: req.body.description
             })
             response = await template.save()
+            console.log(template)
+            console.log(response)
         }
         catch (error) {
             return next(error);
@@ -54,7 +55,7 @@ const templateController = {
         }
         res.status(200).json({ result: response })
     },
- 
+
     async deleteTemplate(req, res, next) {
         // Check for the admin
         if (req.user.role != 'admin') {
@@ -87,17 +88,17 @@ const templateController = {
         // sending data to DB
         let response;
         try {
-            
-            const template = {
-                value: req.body.value,
-                description: req.body.description
-            }
-            
-            response = await Template.updateOne({ _id: req.params.id }, template)
 
+
+            response = await Template.updateOne(
+                { _id: req.params.id}
+                ,
+                req.body
+            )
+            console.log(response)
         }
         catch (error) {
-            
+
             return next(error)
         }
         res.status(200).json({ result: response })
