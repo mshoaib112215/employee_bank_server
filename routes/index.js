@@ -13,6 +13,7 @@ const router = express.Router();
 // register
 router.post('/register', authController.register);
 router.get('/', (req, res)=>{
+    console.log('hello')
     res.status(200).json({message  : "Hello Backend :)"})
 });
 
